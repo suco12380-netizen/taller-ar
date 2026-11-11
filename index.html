@@ -16,7 +16,7 @@
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; font-family: Arial, sans-serif; }
     /* Barra inferior: no tapa la zona central donde se ve la tarjeta */
     #panel {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
@@ -35,7 +35,7 @@
 
 <body>
   <div id="panel">
-    <span id="nombre">Estudiante: Grupo 4</span>
+    <span id="nombre">Grupo: 04</span>
     <button id="btn">Cambiar tamaño</button>
     <span id="estado">Normal</span>
   </div>
@@ -45,7 +45,7 @@
     embedded
     vr-mode-ui="enabled: false"
     renderer="logarithmicDepthBuffer: true; precision: medium;"
-    arjs="sourceType: webcam; facingMode: environment; detectionMode: mono; trackingMethod: best; debugUIEnabled: false;">
+    arjs="sourceType: webcam; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960; trackingMethod: best; debugUIEnabled: false;">
 
     <!-- Tarjeta A: marcador Hiro -> cubo azul -->
     <a-marker preset="hiro">
