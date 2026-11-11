@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--
+  Taller AR - ETN 1024 - UMSA
+  Bibliotecas (versiones fijas):
+    A-Frame 1.3.0
+    AR.js 3.4.5 (aframe-ar.js, seguimiento de marcadores)
+  Basado en los ejemplos oficiales de AR.js: https://ar-js-org.github.io/AR.js-Docs/marker-based/
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Taller AR - Hiro y Kanji</title>
+
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    /* Barra inferior: no tapa la zona central donde se ve la tarjeta */
+    #panel {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 14px;
+    }
+    #nombre { font-weight: bold; }
+    #btn {
+      font-size: 16px; padding: 10px 14px; border: none; border-radius: 8px;
+      background: #ffffff; color: #000; cursor: pointer;
+    }
+    #estado { font-weight: bold; min-width: 80px; text-align: right; }
+  </style>
+</head>
+
+<body>
+  <div id="panel">
+    <span id="nombre">Estudiante: Grupo 4</span>
+    <button id="btn">Cambiar tamaño</button>
+    <span id="estado">Normal</span>
+  </div>
+
+  <!-- Escena: la cámara real se muestra de fondo (sourceType: webcam) -->
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    arjs="sourceType: webcam; facingMode: environment; detectionMode: mono; trackingMethod: best; debugUIEnabled: false;">
+
+    <!-- Tarjeta A: marcador Hiro -> cubo azul -->
+    <a-marker preset="hiro">
+      <a-box class="figura" position="0 0.5 0" width="1" height="1" depth="1"
+             color="#1e50ff" scale="1 1 1"></a-box>
+    </a-marker>
+
+    <!-- Tarjeta B: marcador Kanji -> esfera roja -->
+    <a-marker preset="kanji">
+      <a-sphere class="figura" position="0 0.5 0" radius="0.5"
+                color="#ff1e1e" scale="1 1 1"></a-sphere>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    // Estado de tamaño común para ambas figuras: 1.0 (normal) o 1.5 (ampliado)
+    var ESCALA_NORMAL = 1.0;
+    var ESCALA_AMPLIADA = 1.5;
+    var ampliado = false;
+
+    document.getElementById('btn').addEventListener('click', function () {
+      ampliado = !ampliado;
+      var s = ampliado ? ESCALA_AMPLIADA : ESCALA_NORMAL;
+
+      var figuras = document.querySelectorAll('.figura');
+      figuras.forEach(function (f) {
+        f.setAttribute('scale', s + ' ' + s + ' ' + s);
+      });
+
+      document.getElementById('estado').textContent = ampliado ? 'Ampliado' : 'Normal';
+    });
+  </script>
+</body>
+</html>
