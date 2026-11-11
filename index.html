@@ -16,13 +16,14 @@
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
 
   <style>
-    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; font-family: Arial, sans-serif; }
-    /* Barra inferior: no tapa la zona central donde se ve la tarjeta */
+    html, body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    /* Barra inferior: z-index muy alto para que AR.js (video y canvas) no la tape */
     #panel {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+      position: fixed; left: 0; right: 0; bottom: 0;
+      z-index: 2147483647;
       display: flex; align-items: center; justify-content: space-between;
       gap: 8px; padding: 8px 12px;
-      background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 14px;
+      background: rgba(0, 0, 0, 0.6); color: #fff; font-size: 14px;
     }
     #nombre { font-weight: bold; }
     #btn {
@@ -34,18 +35,12 @@
 </head>
 
 <body>
-  <div id="panel">
-    <span id="nombre">Grupo: 04</span>
-    <button id="btn">Cambiar tamaño</button>
-    <span id="estado">Normal</span>
-  </div>
-
   <!-- Escena: la cámara real se muestra de fondo (sourceType: webcam) -->
   <a-scene
+    id="escena"
     embedded
     vr-mode-ui="enabled: false"
-    renderer="logarithmicDepthBuffer: true; precision: medium;"
-    arjs="sourceType: webcam; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960; trackingMethod: best; debugUIEnabled: false;">
+    renderer="logarithmicDepthBuffer: true; precision: medium;">
 
     <!-- Tarjeta A: marcador Hiro -> cubo azul -->
     <a-marker preset="hiro">
@@ -63,6 +58,24 @@
   </a-scene>
 
   <script>
+    // Resolución de la cámara según la orientación del teléfono (evita el zoom excesivo)
+    var vertical = window.innerHeight > window.innerWidth;
+    var w = vertical ? 480 : 640;
+    var h = vertical ? 640 : 480;
+    document.getElementById('escena').setAttribute('arjs',
+      'sourceType: webcam; trackingMethod: best; debugUIEnabled: false;' +
+      ' sourceWidth: ' + w + '; sourceHeight: ' + h + ';' +
+      ' displayWidth: ' + w + '; displayHeight: ' + h + ';');
+  </script>
+
+  <!-- Barra de interfaz, después de la escena y con z-index máximo -->
+  <div id="panel">
+    <span id="nombre">Estudiante: TU NOMBRE</span>
+    <button id="btn">Cambiar tamaño</button>
+    <span id="estado">Normal</span>
+  </div>
+
+  <script>
     // Estado de tamaño común para ambas figuras: 1.0 (normal) o 1.5 (ampliado)
     var ESCALA_NORMAL = 1.0;
     var ESCALA_AMPLIADA = 1.5;
@@ -72,8 +85,7 @@
       ampliado = !ampliado;
       var s = ampliado ? ESCALA_AMPLIADA : ESCALA_NORMAL;
 
-      var figuras = document.querySelectorAll('.figura');
-      figuras.forEach(function (f) {
+      document.querySelectorAll('.figura').forEach(function (f) {
         f.setAttribute('scale', s + ' ' + s + ' ' + s);
       });
 
