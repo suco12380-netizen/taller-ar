@@ -17,6 +17,9 @@
 
   <style>
     html, body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    a-scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    video { z-index: 0 !important; }
+    .a-canvas { z-index: 1 !important; background: transparent !important; }
     /* Barra inferior: z-index muy alto para que AR.js (video y canvas) no la tape */
     #panel {
       position: fixed; left: 0; right: 0; bottom: 0;
@@ -38,7 +41,6 @@
   <!-- Escena: la cámara real se muestra de fondo (sourceType: webcam) -->
   <a-scene
     id="escena"
-    embedded
     vr-mode-ui="enabled: false"
     renderer="logarithmicDepthBuffer: true; precision: medium;">
 
@@ -68,7 +70,7 @@
 
   <!-- Barra de interfaz, después de la escena y con z-index máximo -->
   <div id="panel">
-    <span id="nombre">Estudiante: VLADY</span>
+    <span id="nombre">Estudiante: SUCO</span>
     <button id="btn">Cambiar tamaño</button>
     <span id="estado">Normal</span>
   </div>
@@ -94,12 +96,19 @@
     // DIAGNÓSTICO (borrar al terminar)
     var diag = document.getElementById('diag');
     function d(t){ diag.textContent = 'diag: ' + t; }
+    function dims(){
+      var c = document.querySelector('canvas.a-canvas'), v = document.querySelector('video');
+      var rc = c ? c.getBoundingClientRect() : null, rv = v ? v.getBoundingClientRect() : null;
+      return ' | canvas ' + (rc ? Math.round(rc.width)+'x'+Math.round(rc.height)+'@'+Math.round(rc.left)+','+Math.round(rc.top) : '-') +
+             ' | video ' + (rv ? Math.round(rv.width)+'x'+Math.round(rv.height)+'@'+Math.round(rv.left)+','+Math.round(rv.top) : '-') +
+             ' | pantalla ' + innerWidth + 'x' + innerHeight;
+    }
     var escena = document.getElementById('escena');
     escena.addEventListener('camera-init', function(){ d('camara iniciada'); });
     escena.addEventListener('camera-error', function(e){ d('ERROR camara: ' + (e.detail && e.detail.error ? e.detail.error.name : '?')); });
-    document.getElementById('mA').addEventListener('markerFound', function(){ d('HIRO detectado'); });
+    document.getElementById('mA').addEventListener('markerFound', function(){ d('HIRO detectado' + dims()); });
     document.getElementById('mA').addEventListener('markerLost', function(){ d('Hiro perdido'); });
-    document.getElementById('mB').addEventListener('markerFound', function(){ d('KANJI detectado'); });
+    document.getElementById('mB').addEventListener('markerFound', function(){ d('KANJI detectado' + dims()); });
     document.getElementById('mB').addEventListener('markerLost', function(){ d('Kanji perdido'); });
     window.addEventListener('error', function(e){ d('JS error: ' + e.message); });
     setTimeout(function(){
