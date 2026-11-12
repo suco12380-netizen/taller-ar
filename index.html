@@ -43,13 +43,13 @@
     renderer="logarithmicDepthBuffer: true; precision: medium;">
 
     <!-- Tarjeta A: marcador Hiro -> cubo azul -->
-    <a-marker type="pattern" url="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/patt.hiro">
+    <a-marker id="mA" type="pattern" url="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/patt.hiro">
       <a-box class="figura" position="0 0.5 0" width="1" height="1" depth="1"
              color="#1e50ff" scale="1 1 1"></a-box>
     </a-marker>
 
     <!-- Tarjeta B: marcador Kanji -> esfera roja -->
-    <a-marker type="pattern" url="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/patt.kanji">
+    <a-marker id="mB" type="pattern" url="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/patt.kanji">
       <a-sphere class="figura" position="0 0.5 0" radius="0.5"
                 color="#ff1e1e" scale="1 1 1"></a-sphere>
     </a-marker>
@@ -58,20 +58,17 @@
   </a-scene>
 
   <script>
-    // Resolución de la cámara según la orientación del teléfono (evita el zoom excesivo)
-    var vertical = window.innerHeight > window.innerWidth;
-    var w = vertical ? 480 : 640;
-    var h = vertical ? 640 : 480;
+    // Parámetros de AR.js (resolución por defecto)
     document.getElementById('escena').setAttribute('arjs',
       'sourceType: webcam; trackingMethod: best; debugUIEnabled: false;' +
-      ' cameraParametersUrl: https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/camera_para.dat;' +
-      ' sourceWidth: ' + w + '; sourceHeight: ' + h + ';' +
-      ' displayWidth: ' + w + '; displayHeight: ' + h + ';');
+      ' cameraParametersUrl: https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/camera_para.dat;');
   </script>
+
+  <div id="diag" style="position:fixed;top:0;left:0;right:0;z-index:2147483647;background:rgba(0,0,0,.6);color:#0f0;font:12px monospace;padding:4px 8px;">diag: iniciando...</div>
 
   <!-- Barra de interfaz, después de la escena y con z-index máximo -->
   <div id="panel">
-    <span id="nombre">Estudiante: ETN</span>
+    <span id="nombre">Estudiante: VLADY</span>
     <button id="btn">Cambiar tamaño</button>
     <span id="estado">Normal</span>
   </div>
@@ -92,6 +89,24 @@
 
       document.getElementById('estado').textContent = ampliado ? 'Ampliado' : 'Normal';
     });
+  </script>
+  <script>
+    // DIAGNÓSTICO (borrar al terminar)
+    var diag = document.getElementById('diag');
+    function d(t){ diag.textContent = 'diag: ' + t; }
+    var escena = document.getElementById('escena');
+    escena.addEventListener('camera-init', function(){ d('camara iniciada'); });
+    escena.addEventListener('camera-error', function(e){ d('ERROR camara: ' + (e.detail && e.detail.error ? e.detail.error.name : '?')); });
+    document.getElementById('mA').addEventListener('markerFound', function(){ d('HIRO detectado'); });
+    document.getElementById('mA').addEventListener('markerLost', function(){ d('Hiro perdido'); });
+    document.getElementById('mB').addEventListener('markerFound', function(){ d('KANJI detectado'); });
+    document.getElementById('mB').addEventListener('markerLost', function(){ d('Kanji perdido'); });
+    window.addEventListener('error', function(e){ d('JS error: ' + e.message); });
+    setTimeout(function(){
+      var v = document.querySelector('video');
+      if (v) { d('video ' + v.videoWidth + 'x' + v.videoHeight + ' pantalla ' + innerWidth + 'x' + innerHeight); }
+      else { d('no hay elemento video'); }
+    }, 4000);
   </script>
 </body>
 </html>
