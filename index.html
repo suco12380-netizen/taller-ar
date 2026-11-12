@@ -56,7 +56,10 @@
                 color="#ff1e1e" scale="1 1 1"></a-sphere>
     </a-marker>
 
-    <a-entity camera></a-entity>
+    <a-entity camera>
+      <!-- PRUEBA (borrar después): cubo amarillo fijo frente a la cámara -->
+      <a-box position="0 0 -2" width="0.3" height="0.3" depth="0.3" color="yellow"></a-box>
+    </a-entity>
   </a-scene>
 
   <script>
@@ -70,7 +73,7 @@
 
   <!-- Barra de interfaz, después de la escena y con z-index máximo -->
   <div id="panel">
-    <span id="nombre">Estudiante: SUCO</span>
+    <span id="nombre">Estudiante: AQUIIIIII</span>
     <button id="btn">Cambiar tamaño</button>
     <span id="estado">Normal</span>
   </div>
@@ -96,6 +99,10 @@
     // DIAGNÓSTICO (borrar al terminar)
     var diag = document.getElementById('diag');
     function d(t){ diag.textContent = 'diag: ' + t; }
+    function mk(id){
+      var o = document.getElementById(id).object3D, p = o.position;
+      return ' | marcador visible=' + o.visible + ' pos=' + p.x.toFixed(2) + ',' + p.y.toFixed(2) + ',' + p.z.toFixed(2);
+    }
     function dims(){
       var c = document.querySelector('canvas.a-canvas'), v = document.querySelector('video');
       var rc = c ? c.getBoundingClientRect() : null, rv = v ? v.getBoundingClientRect() : null;
@@ -106,9 +113,9 @@
     var escena = document.getElementById('escena');
     escena.addEventListener('camera-init', function(){ d('camara iniciada'); });
     escena.addEventListener('camera-error', function(e){ d('ERROR camara: ' + (e.detail && e.detail.error ? e.detail.error.name : '?')); });
-    document.getElementById('mA').addEventListener('markerFound', function(){ d('HIRO detectado' + dims()); });
+    document.getElementById('mA').addEventListener('markerFound', function(){ setTimeout(function(){ d('HIRO detectado' + mk('mA') + dims()); }, 300); });
     document.getElementById('mA').addEventListener('markerLost', function(){ d('Hiro perdido'); });
-    document.getElementById('mB').addEventListener('markerFound', function(){ d('KANJI detectado' + dims()); });
+    document.getElementById('mB').addEventListener('markerFound', function(){ setTimeout(function(){ d('KANJI detectado' + mk('mB') + dims()); }, 300); });
     document.getElementById('mB').addEventListener('markerLost', function(){ d('Kanji perdido'); });
     window.addEventListener('error', function(e){ d('JS error: ' + e.message); });
     setTimeout(function(){
